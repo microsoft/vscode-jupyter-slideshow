@@ -5,6 +5,11 @@
     "version": "0.0.1",
     "publisher": "ms-toolsai",
     "preview": true,
+    "icon": "icon.png",
+    "galleryBanner": {
+        "color": "#ffffff",
+        "theme": "light"
+    },
     "author": {
         "name": "Microsoft Corporation"
     },
