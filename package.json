@@ -30,15 +30,15 @@
     "contributes": {
         "commands": [
             {
-				"command": "jupyter-tagging.switchSlideType",
-				"title": "Switch Slide Type"
-			}
+                "command": "jupyter-tagging.switchSlideType",
+                "title": "Switch Slide Type"
+            }
         ],
         "menus": {
             "notebook/cell/title": [
-				{
-					"command": "jupyter-tagging.switchSlideType"
-				}
+                {
+                    "command": "jupyter-tagging.switchSlideType"
+                }
             ]
         }
     },
