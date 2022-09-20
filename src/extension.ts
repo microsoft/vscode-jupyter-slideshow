@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import * as vscode from 'vscode';
-import { register as registerSlideShow } from './slideShow';
+import { register as registerSlideShow } from './slideshow';
 
 export function activate(context: vscode.ExtensionContext) {
 	registerSlideShow(context);
