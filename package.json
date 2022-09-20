@@ -22,6 +22,10 @@
     "activationEvents": [
         "onNotebook:jupyter-notebook"
     ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Microsoft/vscode-jupyter-slideshow"
+    },
     "main": "./out/extension.js",
     "contributes": {
         "commands": [
