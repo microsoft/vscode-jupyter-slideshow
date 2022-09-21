@@ -2,7 +2,7 @@
     "name": "vscode-jupyter-slideshow",
     "displayName": "Jupyter Slide Show",
     "description": "Jupyter Slide Show support for VS Code",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "publisher": "ms-toolsai",
     "preview": true,
     "icon": "icon.png",
@@ -30,14 +30,24 @@
     "contributes": {
         "commands": [
             {
-                "command": "jupyter-tagging.switchSlideType",
+                "command": "jupyter-slideshow.switchSlideType",
                 "title": "Switch Slide Type"
+            },
+            {
+                "command": "jupyter-slideshow.editSlideShowInJSON",
+                "title": "Edit Slide Type (JSON)",
+				"icon": "$(go-to-file)"
             }
         ],
         "menus": {
             "notebook/cell/title": [
                 {
-                    "command": "jupyter-tagging.switchSlideType"
+                    "command": "jupyter-slideshow.switchSlideType",
+                    "group": "jupyter-slideshow@1"
+                },
+                {
+                    "command": "jupyter-slideshow.editSlideShowInJSON",
+                    "group": "jupyter-slideshow@2"
                 }
             ]
         }

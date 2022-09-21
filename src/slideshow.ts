@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import * as vscode from 'vscode';
+import * as json from './json';
 
 enum SlideShowType {
 	slide = 'slide',
@@ -22,7 +23,7 @@ export class CellSlideShowStatusBarProvider implements vscode.NotebookCellStatus
 			items.push({
 				text: `Slide Type: ${slideshow.slide_type}`,
 				tooltip: `Slide Type: ${slideshow.slide_type}`,
-				command: 'jupyter-tagging.switchSlideType',
+				command: 'jupyter-slideshow.switchSlideType',
 				alignment: vscode.NotebookCellStatusBarAlignment.Right,
 			});
 		}
@@ -31,10 +32,20 @@ export class CellSlideShowStatusBarProvider implements vscode.NotebookCellStatus
 	}
 }
 
+export function getActiveCell() {
+	// find active cell
+	const editor = vscode.window.activeNotebookEditor;
+	if (!editor) {
+		return;
+	}
+
+	return editor.notebook.cellAt(editor.selections[0].start);
+}
+
 export function register(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.notebooks.registerNotebookCellStatusBarItemProvider('jupyter-notebook', new CellSlideShowStatusBarProvider()));
 
-    context.subscriptions.push(vscode.commands.registerCommand('jupyter-tagging.switchSlideType', async (cell: vscode.NotebookCell) => {
+    context.subscriptions.push(vscode.commands.registerCommand('jupyter-slideshow.switchSlideType', async (cell: vscode.NotebookCell) => {
 		// create quick pick items for each slide type
 		const items: vscode.QuickPickItem[] = [];
 		for (const type in SlideShowType) {
@@ -69,6 +80,34 @@ export function register(context: vscode.ExtensionContext) {
 			});
 			edit.set(cell.notebook.uri, [nbEdit]);
 			await vscode.workspace.applyEdit(edit);
+		}
+	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('jupyter-slideshow.editSlideShowInJSON', async () => {
+		let cell = getActiveCell();
+		if (!cell) {
+			return;
+		}
+		const resourceUri = cell.notebook.uri;
+		const document = await vscode.workspace.openTextDocument(resourceUri);
+		const tree = json.parseTree(document.getText());
+		const cells = json.findNodeAtLocation(tree, ['cells']);
+		if (cells && cells.children && cells.children[cell.index]) {
+			const cellNode = cells.children[cell.index];
+			const metadata = json.findNodeAtLocation(cellNode, ['metadata']);
+			if (metadata) {
+				const slideshow = json.findNodeAtLocation(metadata, ['slideshow']);
+				if (slideshow) {
+					const range = new vscode.Range(document.positionAt(slideshow.offset), document.positionAt(slideshow.offset + slideshow.length));
+					await vscode.window.showTextDocument(document, { selection: range, viewColumn: vscode.ViewColumn.Beside });
+				} else {
+					const range = new vscode.Range(document.positionAt(metadata.offset), document.positionAt(metadata.offset + metadata.length));
+					await vscode.window.showTextDocument(document, { selection: range, viewColumn: vscode.ViewColumn.Beside });
+				}
+			}  else {
+				const range = new vscode.Range(document.positionAt(cellNode.offset), document.positionAt(cellNode.offset + cellNode.length));
+				await vscode.window.showTextDocument(document, { selection: range, viewColumn: vscode.ViewColumn.Beside });
+			}
 		}
 	}));
 }
