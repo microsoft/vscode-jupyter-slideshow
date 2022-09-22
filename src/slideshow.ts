@@ -17,7 +17,7 @@ enum SlideShowType {
 export class CellSlideShowStatusBarProvider implements vscode.NotebookCellStatusBarItemProvider {
 	provideCellStatusBarItems(cell: vscode.NotebookCell, token: vscode.CancellationToken): vscode.ProviderResult<vscode.NotebookCellStatusBarItem[]> {
 		const items: vscode.NotebookCellStatusBarItem[] = [];
-		const slideshow = cell.metadata.custom?.metadata?.slideshow ?? cell.metadata.metadata?.slideshow;
+		const slideshow = cell.metadata.custom?.metadata?.slideshow;
 
 		if (slideshow?.slide_type) {
 			items.push({
@@ -58,25 +58,32 @@ export function register(context: vscode.ExtensionContext) {
 		const selected = await vscode.window.showQuickPick(items);
 		// updat cell metadata with this slide type
 		if (selected) {
+			const cellMetadataCopy = { ...cell.metadata };
 			if (selected.label === SlideShowType.none) {
 				// remove the slideshow metadata
-				delete cell.metadata.custom?.metadata?.slideshow;
-				delete cell.metadata.metadata?.slideshow;
+				delete cellMetadataCopy.custom?.metadata?.slideshow;
 			} else {
-				if (cell.metadata.custom?.metadata) {
-					// embedded in custom metadata
+				if (!cellMetadataCopy.custom) {
+					cellMetadataCopy.custom = {};
+				}
+
+				if (cell.metadata.custom.metadata) {
 					cell.metadata.custom.metadata.slideshow = cell.metadata.custom.metadata.slideshow ?? {};
 					cell.metadata.custom.metadata.slideshow.slide_type = selected.label;
 				} else {
-					cell.metadata.metadata.slideshow = cell.metadata.metadata.slideshow ?? {};
-					cell.metadata.metadata.slideshow.slide_type = selected.label;
+					// no metadata, so create it
+					cell.metadata.custom.metadata = {
+						slideshow: {
+							slide_type: selected.label
+						}
+					};
 				}
 			}
 
 			// create workspace edit to update slideshow
 			const edit = new vscode.WorkspaceEdit();
 			const nbEdit = vscode.NotebookEdit.updateCellMetadata(cell.index, {
-				...cell.metadata,
+				...cellMetadataCopy,
 			});
 			edit.set(cell.notebook.uri, [nbEdit]);
 			await vscode.workspace.applyEdit(edit);
