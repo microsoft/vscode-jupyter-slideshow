@@ -2,7 +2,7 @@
     "name": "vscode-jupyter-slideshow",
     "displayName": "Jupyter Slide Show",
     "description": "Jupyter Slide Show support for VS Code",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "publisher": "ms-toolsai",
     "preview": true,
     "icon": "icon.png",
@@ -20,7 +20,9 @@
         "Notebooks"
     ],
     "activationEvents": [
-        "onNotebook:jupyter-notebook"
+        "onNotebook:jupyter-notebook",
+        "onCommand:jupyter-slideshow.switchSlideType",
+        "onCommand:jupyter-slideshow.editSlideShowInJSON"
     ],
     "repository": {
         "type": "git",
