@@ -45,7 +45,12 @@ export function getActiveCell() {
 export function register(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.notebooks.registerNotebookCellStatusBarItemProvider('jupyter-notebook', new CellSlideShowStatusBarProvider()));
 
-    context.subscriptions.push(vscode.commands.registerCommand('jupyter-slideshow.switchSlideType', async (cell: vscode.NotebookCell) => {
+    context.subscriptions.push(vscode.commands.registerCommand('jupyter-slideshow.switchSlideType', async (cell: vscode.NotebookCell | undefined) => {
+		cell = cell ?? getActiveCell();
+		if (!cell) {
+			return;
+		}
+
 		// create quick pick items for each slide type
 		const items: vscode.QuickPickItem[] = [];
 		for (const type in SlideShowType) {
@@ -67,12 +72,12 @@ export function register(context: vscode.ExtensionContext) {
 					cellMetadataCopy.custom = {};
 				}
 
-				if (cell.metadata.custom.metadata) {
-					cell.metadata.custom.metadata.slideshow = cell.metadata.custom.metadata.slideshow ?? {};
-					cell.metadata.custom.metadata.slideshow.slide_type = selected.label;
+				if (cellMetadataCopy.custom.metadata) {
+					cellMetadataCopy.custom.metadata.slideshow = cellMetadataCopy.custom.metadata.slideshow ?? {};
+					cellMetadataCopy.custom.metadata.slideshow.slide_type = selected.label;
 				} else {
 					// no metadata, so create it
-					cell.metadata.custom.metadata = {
+					cellMetadataCopy.custom.metadata = {
 						slideshow: {
 							slide_type: selected.label
 						}
@@ -90,11 +95,12 @@ export function register(context: vscode.ExtensionContext) {
 		}
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand('jupyter-slideshow.editSlideShowInJSON', async () => {
-		let cell = getActiveCell();
+	context.subscriptions.push(vscode.commands.registerCommand('jupyter-slideshow.editSlideShowInJSON', async (cell: vscode.NotebookCell | undefined) => {
+		cell = cell ?? getActiveCell();
 		if (!cell) {
 			return;
 		}
+
 		const resourceUri = cell.notebook.uri;
 		const document = await vscode.workspace.openTextDocument(resourceUri);
 		const tree = json.parseTree(document.getText());
