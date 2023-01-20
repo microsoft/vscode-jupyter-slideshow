@@ -1,5 +1,19 @@
 # Jupyter Slide Show support in VS Code
 
+This extension provides support for adding slide types to notebook cells for working with tools like [`nbconvert`](https://github.com/jupyter/nbconvert) to help easily convert your `.ipynb` file into a slide show. Supported slide types are:
+![Slide types](images/slide-types.png)
+
+Support for additional and more flexible cell tagging is provided by the [Jupyter Cell Tags](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.vscode-jupyter-cell-tags) extension.
+
+### Features:
+- Add a slide type to the cell you're on by opening the Command Palette (`Cmd+Shift+P`) and selecting **Switch Slide Type**
+- Modify slide types for notebook cells by selecting the slide type on the cell ![Modify slide type](images/modify-slide-type.png)
+- Add or modify slide type for multiple cells by editing the notebook's metadata (JSON format) by opening the Command Palette (`Cmd+Shift+P`) and selecting **Edit Slide Type (JSON)**
+
+### Usage:
+After assigning slide types to your cells, create an HTML slideshow presentation by opening the integrated terminal and running the command, `jupyter nbconvert '<notebook-file-name>.ipynb' --to slides --post serve`.
+
+This extension comes with the [Jupyter extension for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter) and can be disabled or uninstalled.
 
 ## Contributing
 
