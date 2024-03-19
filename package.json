@@ -2,7 +2,7 @@
     "name": "vscode-jupyter-slideshow",
     "displayName": "Jupyter Slide Show",
     "description": "Jupyter Slide Show support for VS Code",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "publisher": "ms-toolsai",
     "preview": true,
     "icon": "icon.png",
@@ -14,7 +14,7 @@
         "name": "Microsoft Corporation"
     },
     "engines": {
-        "vscode": "^1.71.0"
+        "vscode": "^1.88.0"
     },
     "categories": [
         "Notebooks"
